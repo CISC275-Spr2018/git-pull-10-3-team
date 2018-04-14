@@ -48,7 +48,9 @@ import javax.swing.Timer;
 																																																																																																																											case KeyEvent.VK_SPACE:
 																																																																																																																																	model.setState(OrcState.JUMP);
 																																																																																																																																							break;
-																																																																																																																																											}
+case KeyEvent.VK_F:
+																																																																																																																																	model.setState(OrcState.F);
+																																																																																																																																							break;																																																																																																																																											}
 																																																																																																																																														}
 																																																																																																																																																	@Override
 																																																																																																																																																				public void keyReleased(KeyEvent ke) {
