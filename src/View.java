@@ -78,72 +78,107 @@ public class View{
 		}
 	}
 	private void loadImages(){
-		images = new BufferedImage[Direction.values().length];
-		animation = new BufferedImage[Direction.values().length][0];
-		for(int i = 0; i < Direction.values().length; i++) {
+		int numDir, numState;
+		numDir = Direction.values().length;
+		numState = OrcState.values().length;
+		images = new BufferedImage[numState * numDir];
+		//animation is a 2D array; each row is a different animation, each column is a frame
+		//the # of rows is equal to the number of states * the number of directions each state can be in
+		animation = new BufferedImage[Direction.values().length*OrcState.values().length][0];
+		for(int i = 0; i < numState; i++){
+			for(int j = 0; j < numDir; j++){
+				if(i == 0){//halt is loaded differently than the other states
+					if(j==0)
+						loadHaltImg(animation[i],animation[i].length);//load all at once
+					//this is done because the halt animation file is different than the others
+				}else{
+					images[i*numDir + j] = createImage(OrcState.values()[i], Direction.values()[j]);
+					animation[i*numDir + j] = new BufferedImage[images[i*numDir + j].getWidth()/imgWidth];
+					loadImg(images[i*numDir + j], (i*numDir+j), animation[i*numDir + j].length);
+				}
+			}
+		}
+		pics = new BufferedImage[animation[getIndex(OrcState.FORWARD, Direction.EAST)].length];
+		pics = animation[getIndex(OrcState.FORWARD, Direction.EAST)]; 
+		//get array postion of forward south
+	}
+	private void loadHaltImg(BufferedImage[] an ,int frames){
+		for(int i = 0; i < Direction.values().length; i++){
 			images[i] = createImage(Direction.values()[i]);
 			animation[i] = new BufferedImage[images[i].getWidth()/imgWidth];
-			loadImg(images[i],animation[i],animation[i].length);
+			loadImg(images[i], i, animation[i].length);
 		}
-		pics = animation[Direction.SOUTH.ordinal()];
 	}
-	private void loadImg(BufferedImage img, BufferedImage[] an ,int frames){
+	private void loadImg(BufferedImage img, int index ,int frames){
+		System.out.println("Index: " + index);
+		System.out.println("Frames: "+frames);
 		for(int i = 0; i < frames; i++){
-			an[i] = img.getSubimage(imgWidth * i, 0, imgWidth, imgHeight);
+			animation[index][i] = img.getSubimage(imgWidth * i, 0, imgWidth, imgHeight);
 		}
 	}
-	private BufferedImage createImage(Direction direction) {
+	private BufferedImage createImage(Direction dir) {//***THIS IS FOR HALT ANIMATIONS ONLY***
 		BufferedImage bufferedImage = null;
 		try {
-			bufferedImage = ImageIO.read(new File("images/orc/orc_"+ direction.getName()+".png"));
+			switch((dir.ordinal() % 2)){
+			case 0: 
+				bufferedImage = ImageIO.read(new File("images/orc/orc_idle_ewns.png"));
+				break;
+			default:
+				bufferedImage = ImageIO.read(new File("images/orc/orc_idle_nwneswse.png"));
+				break;
+			}
+			switch(dir){
+			case NORTH:
+				bufferedImage = bufferedImage.getSubimage(0, imgHeight*2, bufferedImage.getWidth(), imgHeight);
+				break;
+			case SOUTH:
+				bufferedImage = bufferedImage.getSubimage(0, imgHeight*3, bufferedImage.getWidth(), imgHeight);
+				break;
+			case EAST:
+				bufferedImage = bufferedImage.getSubimage(0, 0, bufferedImage.getWidth(), imgHeight);
+				break;
+			case WEST:
+				bufferedImage = bufferedImage.getSubimage(0, imgHeight, bufferedImage.getWidth(), imgHeight);
+				break;
+			case NORTHEAST:
+				bufferedImage = bufferedImage.getSubimage(0, imgHeight, bufferedImage.getWidth(), imgHeight);
+				break;
+			case SOUTHEAST:
+				bufferedImage = bufferedImage.getSubimage(0, imgHeight*3, bufferedImage.getWidth(), imgHeight);
+				break;
+			case NORTHWEST:
+				bufferedImage = bufferedImage.getSubimage(0, 0, bufferedImage.getWidth(), imgHeight);
+				break;
+			case SOUTHWEST:
+				bufferedImage = bufferedImage.getSubimage(0, imgHeight*2, bufferedImage.getWidth(), imgHeight);
+				break;
+			}
 			return bufferedImage;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
-		// TODO: Change this method so you can load other orc animation bitmaps
 	}
-	public void update(int x, int y, Direction direct){
+	private BufferedImage createImage(OrcState state, Direction direction) {
+		BufferedImage bufferedImage = null;
+		try {
+			bufferedImage = ImageIO.read(new File("images/orc/orc_"+state.getName()+direction.getName()+".png"));
+			return bufferedImage;
+		} catch (IOException e) {
+			System.out.println("images/orc/orc_"+state.getName()+direction.getName()+".png");
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static int getIndex(OrcState s, Direction dir){
+		return s.ordinal()*Direction.values().length + dir.ordinal();
+	}
+	public void update(int x, int y, Direction direct, OrcState state){
 		xloc = x;
 		yloc = y;
-		switch(direct){
-			case HALT:	
-				frameCount = animation[Direction.HALT.ordinal()].length;	
-				pics = animation[Direction.HALT.ordinal()];
-				break;
-			case NORTH:	
-				frameCount = animation[Direction.NORTH.ordinal()].length;	
-				pics = animation[Direction.NORTH.ordinal()];
-				break;
-			case EAST:
-				frameCount = animation[Direction.EAST.ordinal()].length;	
-				pics = animation[Direction.EAST.ordinal()];
-				break;
-			case WEST:	
-				frameCount = animation[Direction.WEST.ordinal()].length;	
-				pics = animation[Direction.WEST.ordinal()];
-				break;
-			case SOUTH:
-				frameCount = animation[Direction.SOUTH.ordinal()].length;	
-				pics = animation[Direction.SOUTH.ordinal()];
-				break;
-			case NORTHEAST:
-				frameCount = animation[Direction.NORTHEAST.ordinal()].length;	
-				pics = animation[Direction.NORTHEAST.ordinal()];
-				break;
-			case NORTHWEST:
-				frameCount = animation[Direction.NORTHWEST.ordinal()].length;	
-				pics = animation[Direction.NORTHWEST.ordinal()];
-				break;
-			case SOUTHEAST:
-				frameCount = animation[Direction.SOUTHEAST.ordinal()].length;	
-				pics = animation[Direction.SOUTHEAST.ordinal()];
-				break;
-			case SOUTHWEST:
-				frameCount = animation[Direction.SOUTHWEST.ordinal()].length;	
-				pics = animation[Direction.SOUTHWEST.ordinal()];
-				break;
-		}
+		frameCount = animation[getIndex(state, direct)].length;
+		pics = animation[getIndex(state, direct)];
 		picNum = (picNum + 1) % frameCount;
 		panel.repaint();
 		try {
