@@ -3,15 +3,14 @@
 
 public enum Direction {
 
-	HALT("idle_ewns"),
-	NORTH("forward_north"),
-	NORTHEAST("forward_northeast"),
-	EAST("forward_east"),
-	SOUTHEAST("forward_southeast"),
-	SOUTH("forward_south"),
-	SOUTHWEST("forward_southwest"),
-	WEST("forward_west"),
-	NORTHWEST("forward_northwest");
+	NORTH("_north"),
+	NORTHEAST("_northeast"),
+	EAST("_east"),
+	SOUTHEAST("_southeast"),
+	SOUTH("_south"),
+	SOUTHWEST("_southwest"),
+	WEST("_west"),
+	NORTHWEST("_northwest");
 	
 	private String name = null;
 	
