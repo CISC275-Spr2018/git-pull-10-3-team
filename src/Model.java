@@ -14,12 +14,14 @@ class Orc{
 	int yPos;
 	Direction direction;
 	OrcState state;
+	int stateTime;
 	
 	public void setDirection(Direction d) {
 		direction = d;
 	}
 	public void setState(OrcState s){
 		state = s;
+		stateTime = 0;
 	}
 	
 	public Orc(int x, int y, Direction dir, OrcState s) {
@@ -27,6 +29,7 @@ class Orc{
 		this.yPos = y;
 		this.direction = dir;
 		this.state = s;
+		stateTime = 0;
 	}
 }
 
@@ -70,11 +73,15 @@ public class Model{
 		charles.setState(s);
 	}
 	public void updateLocationAndDirection(){
-		//check right side collision
-		switch(charles.state){
 		
+		charles.stateTime++;
+		switch(charles.state){
+		case JUMP:
+			if(charles.stateTime > 8){
+				charles.setState(OrcState.FORWARD);
+			}
 		case FORWARD:
-			
+		//check right side collision	
     	if (charles.xPos + (imgWidth*.85) + xIncr > width && charles.direction.getName().contains("east")) {
     		if (charles.direction == Direction.SOUTHEAST)
     			charles.direction = Direction.SOUTHWEST;
@@ -122,7 +129,15 @@ public class Model{
 		else if (charles.direction.getName().contains("north"))
 			charles.yPos -= yIncr;
 		break;
+		case HALT:
+		break;
+		case FIRE:
+			if(charles.stateTime > 4){
+				charles.setState(OrcState.FORWARD);
+			}
+		break;
 		default:
+				charles.setState(OrcState.HALT);
 		break;
 		}
 	}
