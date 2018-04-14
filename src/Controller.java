@@ -49,7 +49,7 @@ import javax.swing.Timer;
 																																																																																																																																	model.setState(OrcState.JUMP);
 																																																																																																																																							break;
 case KeyEvent.VK_F:
-																																																																																																																																	model.setState(OrcState.F);
+																																																																																																																																	model.setState(OrcState.FIRE);
 																																																																																																																																							break;																																																																																																																																											}
 																																																																																																																																														}
 																																																																																																																																																	@Override
