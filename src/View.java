@@ -110,8 +110,6 @@ public class View{
 		}
 	}
 	private void loadImg(BufferedImage img, int index ,int frames){
-		System.out.println("Index: " + index);
-		System.out.println("Frames: "+frames);
 		for(int i = 0; i < frames; i++){
 			animation[index][i] = img.getSubimage(imgWidth * i, 0, imgWidth, imgHeight);
 		}
@@ -179,6 +177,10 @@ public class View{
 		yloc = y;
 		frameCount = animation[getIndex(state, direct)].length;
 		pics = animation[getIndex(state, direct)];
+		if(picNum >= (frameCount-2) && state == OrcState.FORWARD){
+			pics = animation[getIndex(OrcState.FORWARD, direct)];
+			frameCount = pics.length;
+		}
 		picNum = (picNum + 1) % frameCount;
 		panel.repaint();
 		try {
